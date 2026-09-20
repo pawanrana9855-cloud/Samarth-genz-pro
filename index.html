@@ -355,7 +355,8 @@
             const height = dimensions[1];
             
             // --- Pollinations.ai FLUX URL (Master Model) ---
-            const imageUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?model=flux&seed=${randomSeed}&width=${width}&height=${height}&nologo=true`;
+            const imageUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?model=flux&seed=${randomSeed}&nologo=true`;
+
 
             // Preload image to ensure smooth display
             const img = new Image();
