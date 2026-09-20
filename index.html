@@ -341,8 +341,8 @@
             const cleanPrompt = encodeURIComponent(enhancedPrompt);
             const randomSeed = Math.floor(Math.random() * 1000000);
             
-            // Reliable URL
-            const imageUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?seed=${randomSeed}&nologo=true`;
+            // Reliabl. const imageUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?seed=${randomSeed}&nologo=true&model=turbo`;
+
 
             // Handlers on Image directly
             resultImage.onload = function() {
