@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samarth GenZ Pro - AI Assistant & Image Generator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: #1e293b;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            text-align: center;
+            color: #38bdf8;
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        /* Chat Section */
+        .chat-card {
+            background-color: #0f172a;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 25px;
+            border: 1px solid #334155;
+        }
+
+        .chat-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: #38bdf8;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-box {
+            height: 180px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-right: 5px;
+        }
+
+        .msg {
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .msg.user {
+            align-self: flex-end;
+            background-color: #0284c7;
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .msg.bot {
+            align-self: flex-start;
+            background-color: #334155;
+            color: #f1f5f9;
+            border-bottom-left-radius: 2px;
+        }
+
+        .chat-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input-group input {
+            flex: 1;
+            background-color: #1e293b;
+            border: 1px solid #475569;
+            padding: 10px 14px;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+        }
+
+        .chat-input-group button {
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Image Generator Section */
+        .image-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .img-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .img-input-group input {
+            flex: 1;
+            background-color: #0f172a;
+            border: 1px solid #475569;
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+        }
+
+        .img-input-group button {
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .section-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chip {
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #94a3b8;
+            cursor: pointer;
+        }
+
+        .chip.active {
+            background-color: #0284c7;
+            color: white;
+            border-color: #0284c7;
+        }
+
+        .img-preview {
+            width: 100%;
+            margin-top: 15px;
+            border-radius: 12px;
+            overflow: hidden;
+            display: none;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+
+        .img-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Samarth GenZ Pro</h1>
+        <div class="subtitle">AI Assistant & High-Level Image Generator</div>
+
+        <!-- Smart Gemini-style Chatbot -->
+        <div class="chat-card">
+            <div class="chat-title">💬 Samarth AI Assistant</div>
+            <div class="chat-box" id="chatBox">
+                <div class="msg bot">Namaste! Main aapka AI Dost hoon. Aap mujhse kuch bhi pooch sakte hain!</div>
+            </div>
+            <div class="chat-input-group">
+                <input type="text" id="chatInput" placeholder="Mujhse kuch bhi pucho..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+                <button onclick="sendChatMessage()">Send</button>
+            </div>
+        </div>
+
+        <!-- Image Generator -->
+        <div class="image-section">
+            <div class="img-input-group">
+                <input type="text" id="imgPrompt" placeholder="Image description (e.g. A cute cat)">
+                <button onclick="generateImage()">Generate</button>
+            </div>
+
+            <div>
+                <div class="section-label">1. Ratio Choose Karein</div>
+                <div class="options-grid">
+                    <div class="chip active" onclick="selectChip(this, 'ratio')">Square (1:1)</div>
+                    <div class="chip" onclick="selectChip(this, 'ratio')">Vertical (9:16)</div>
+                    <div class="chip" onclick="selectChip(this, 'ratio')">Horizontal (16:9)</div>
+                </div>
+            </div>
+
+            <div>
+                <div class="section-label">2. Style Select Karein</div>
+                <div class="options-grid">
+                    <div class="chip active" onclick="selectChip(this, 'style')">Realistic Photo</div>
+                    <div class="chip" onclick="selectChip(this, 'style')">Cyberpunk</div>
+                    <div class="chip" onclick="selectChip(this, 'style')">Anime Style</div>
+                    <div class="chip" onclick="selectChip(this, 'style')">3D Render</div>
+                </div>
+            </div>
+
+            <div class="img-preview" id="imgPreview">
+                <img id="generatedImg" src="" alt="AI Generated Image">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // AI Chat Engine (Gemini-style responses)
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const chatBox = document.getElementById('chatBox');
+            const userMsg = input.value.trim();
+
+            if (!userMsg) return;
+
+            // Display user message
+            const userDiv = document.createElement('div');
+            userDiv.className = 'msg user';
+            userDiv.innerText = userMsg;
+            chatBox.appendChild(userDiv);
+            input.value = '';
+
+            // Display loading bot response
+            const botDiv = document.createElement('div');
+            botDiv.className = 'msg bot';
+            botDiv.innerText = "Soch raha hoon...";
+            chatBox.appendChild(botDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                // System prompt forces the AI to reply like a friendly Gemini assistant in Hinglish
+                const systemInstruction = encodeURIComponent("You are Samarth AI Assistant, a smart, polite, helpful and friendly AI companion like Gemini. Answer in simple, natural Hinglish/Hindi.");
+                const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(userMsg)}?system=${systemInstruction}`);
+                const textReply = await response.text();
+
+                botDiv.innerText = textReply;
+            } catch (error) {
+                botDiv.innerText = "Main ekdum badiya hoon! Aap bataiye aapka kya haal chaal hai?";
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Chip selection logic
+        function selectChip(element, category) {
+            const siblings = element.parentElement.getElementsByClassName('chip');
+            for (let chip of siblings) {
+                chip.classList.remove('active');
+            }
+            element.classList.add('active');
+        }
+
+        // Image Generation Logic
+        function generateImage() {
+            const prompt = document.getElementById('imgPrompt').value.trim();
+            const preview = document.getElementById('imgPreview');
+            const img = document.getElementById('generatedImg');
+
+            if (!prompt) {
+                alert("Kripya image ka prompt enter karein!");
+                return;
+            }
+
+            preview.style.display = 'block';
+            img.style.opacity = '0.5';
+
+            const encodedPrompt = encodeURIComponent(prompt);
+            const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?model=turbo&seed=${Math.floor(Math.random() * 1000000)}`;
+
+            img.onload = () => {
+                img.style.opacity = '1';
+            };
+
+            img.src = imageUrl;
+        }
+    </script>
+</body>
+  </html>
+  
