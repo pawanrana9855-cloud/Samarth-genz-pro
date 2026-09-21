@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samarth GenZ Pro - Smart AI Assistant</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --card-bg: #121212;
+            --text-color: #ffffff;
+            --subtext-color: #888888;
+            --border-color: #222222;
+            --user-msg-bg: #262626;
+            --bot-msg-bg: #1a1a1a;
+            --input-bg: #1a1a1a;
+        }
+
+        .light-theme {
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --text-color: #1a1a1a;
+            --subtext-color: #666666;
+            --border-color: #dddddd;
+            --user-msg-bg: #e2e8f0;
+            --bot-msg-bg: #f1f5f9;
+            --input-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            height: 90vh;
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        /* Header Area */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .header-title h1 {
+            color: var(--text-color);
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .header-title .subtitle {
+            color: var(--subtext-color);
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        /* Settings Dropdown Menu */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 190px;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .dropdown-menu div {
+            padding: 12px 15px;
+            font-size: 14px;
+            color: var(--text-color);
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dropdown-menu div:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-menu div:hover {
+            opacity: 0.8;
+        }
+
+        /* Chat Output Area */
+        .chat-box {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 10px 5px;
+            margin-bottom: 15px;
+        }
+
+        .msg {
+            max-width: 88%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.6;
+            word-wrap: break-word;
+            white-space: pre-line;
+        }
+
+        .msg.user {
+            align-self: flex-end;
+            background-color: var(--user-msg-bg);
+            color: var(--text-color);
+            border-bottom-right-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .msg.bot {
+            align-self: flex-start;
+            background-color: var(--bot-msg-bg);
+            color: var(--text-color);
+            border-bottom-left-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Bottom Input Bar */
+        .input-bar {
+            display: flex;
+            gap: 8px;
+            background-color: var(--input-bg);
+            padding: 8px 12px;
+            border-radius: 25px;
+            border: 1px solid var(--border-color);
+            align-items: center;
+        }
+
+        .input-bar input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 14px;
+            outline: none;
+            padding: 6px 4px;
+        }
+
+        .input-bar input::placeholder {
+            color: var(--subtext-color);
+        }
+
+        .input-bar button {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            border-radius: 20px;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            width: 85%;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-color);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .modal-content button {
+            width: 100%;
+            padding: 10px;
+            background: var(--text-color);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .close-btn {
+            background: transparent !important;
+            color: var(--subtext-color) !important;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainContainer">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">
+                <h1>Samarth GenZ Pro</h1>
+                <div class="subtitle" id="userStatus">Smart AI Assistant</div>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">🌓</button>
+                <button class="icon-btn" onclick="toggleMenu()" title="Settings">⋮</button>
+            </div>
+        </div>
+
+        <!-- Settings Dropdown -->
+        <div class="dropdown-menu" id="dropdownMenu">
+            <div onclick="openAuth('login')">🔑 Login</div>
+            <div onclick="openAuth('signup')">📝 Signup</div>
+            <div onclick="openAPIModal()">🔑 Set API Key</div>
+            <div onclick="clearChat()">🗑️ Clear Chat History</div>
+        </div>
+
+        <!-- Chat Box Area -->
+        <div class="chat-box" id="chatBox"></div>
+
+        <!-- Input Bar with Voice Button -->
+        <div class="input-bar">
+            <button class="icon-btn" onclick="startVoiceInput()" title="Voice Input">🎙️</button>
+            <input type="text" id="userInput" placeholder="Ask anything..." onkeypress="if(event.key==='Enter') processInput()">
+            <button onclick="processInput()">Send</button>
+        </div>
+
+        <!-- Auth Modal (Login/Signup) -->
+        <div class="modal" id="authModal">
+            <div class="modal-content">
+                <h2 id="modalTitle">Login</h2>
+                <input type="text" id="authName" placeholder="Full Name" style="display:none;">
+                <input type="email" id="authEmail" placeholder="Email Address">
+                <input type="password" id="authPass" placeholder="Password">
+                <button onclick="handleAuth()" id="modalBtn">Submit</button>
+                <button class="close-btn" onclick="closeModal('authModal')">Cancel</button>
+            </div>
+        </div>
+
+        <!-- API Key Modal -->
+        <div class="modal" id="apiModal">
+            <div class="modal-content">
+                <h2>Set Gemini / OpenAI API Key</h2>
+                <input type="password" id="apiKeyInput" placeholder="Paste your API Key here">
+                <button onclick="saveAPIKey()">Save Key</button>
+                <button class="close-btn" onclick="closeModal('apiModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAuthMode = 'login';
+
+        // Load Saved Chat History & Settings on Startup
+        window.onload = function() {
+            loadChatHistory();
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('light-theme');
+            }
+        };
+
+        function toggleMenu() {
+            const menu = document.getElementById('dropdownMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // --- Chat History Management ---
+        function saveChatHistory() {
+            const chatBox = document.getElementById('chatBox');
+            localStorage.setItem('samarth_chat_history', chatBox.innerHTML);
+        }
+
+        function loadChatHistory() {
+            const savedHistory = localStorage.getItem('samarth_chat_history');
+            const chatBox = document.getElementById('chatBox');
+            if (savedHistory && savedHistory.trim() !== '') {
+                chatBox.innerHTML = savedHistory;
+            } else {
+                chatBox.innerHTML = '<div class="msg bot">Hello! Main Samarth AI Assistant hoon. Aap mujhse koi bhi sawaal pooch sakte hain!</div>';
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function clearChat() {
+            localStorage.removeItem('samarth_chat_history');
+            loadChatHistory();
+            toggleMenu();
+        }
+
+        // --- Voice Input Feature ---
+        function startVoiceInput() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert("Aapke browser me voice recognition support nahi hai.");
+                return;
+            }
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'hi-IN'; // Supports Hindi/Hinglish speech
+
+            recognition.onstart = function() {
+                document.getElementById('userInput').placeholder = "Listening...";
+            };
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('userInput').value = transcript;
+                document.getElementById('userInput').placeholder = "Ask anything...";
+            };
+
+            recognition.onerror = function() {
+                document.getElementById('userInput').placeholder = "Ask anything...";
+            };
+
+            recognition.start();
+        }
+
+        // --- Auth & API Key Modals ---
+        function openAuth(mode) {
+            currentAuthMode = mode;
+            toggleMenu();
+            document.getElementById('authModal').style.display = 'flex';
+            document.getElementById('modalTitle').innerText = mode === 'login' ? 'Login' : 'Create Account';
+            document.getElementById('authName').style.display = mode === 'signup' ? 'block' : 'none';
+            document.getElementById('modalBtn').innerText = mode === 'login' ? 'Login' : 'Sign Up';
+        }
+
+        function handleAuth() {
+            const email = document.getElementById('authEmail').value.trim();
+            const pass = document.getElementById('authPass').value.trim();
+            const name = document.getElementById('authName').value.trim();
+
+            if (!email || !pass) {
+                alert("Kripya details bharein!");
+                return;
+            }
+
+            if (currentAuthMode === 'signup') {
+                localStorage.setItem('user_' + email, JSON.stringify({ name: name || 'User', email, pass }));
+                alert("Account ban gaya! Ab login karein.");
+                openAuth('login');
+            } else {
+                const savedUser = JSON.parse(localStorage.getItem('user_' + email));
+                if (savedUser && savedUser.pass === pass) {
+                    document.getElementById('userStatus').innerText = "Logged in: " + savedUser.name;
+                    alert("Welcome back, " + savedUser.name + "!");
+                    closeModal('authModal');
+                } else {
+                    alert("Email ya Password galat hai!");
+                }
+            }
+        }
+
+        function openAPIModal() {
+            toggleMenu();
+            document.getElementById('apiModal').style.display = 'flex';
+            document.getElementById('apiKeyInput').value = localStorage.getItem('samarth_api_key') || '';
+        }
+
+        function saveAPIKey() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            localStorage.setItem('samarth_api_key', key);
+            alert("API Key Save ho gayi!");
+            closeModal('apiModal');
+        }
+
+        // --- Core Smart Reply Logic ---
+        async function processInput() {
+            const inputField = document.getElementById('userInput');
+            const chatBox = document.getElementById('chatBox');
+            const userMsg = inputField.value.trim();
+
+            if (!userMsg) return;
+
+            // Show User Message
+            const userDiv = document.createElement('div');
+            userDiv.className = 'msg user';
+            userDiv.innerText = userMsg;
+            chatBox.appendChild(userDiv);
+
+            inputField.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Show Thinking State
+            const botDiv = document.createElement('div');
+            botDiv.className = 'msg bot';
+            botDiv.innerText = "Soch raha hoon...";
+            chatBox.appendChild(botDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Generate Accurate Answer
+            const response = getAccurateReply(userMsg);
+            
+            setTimeout(() => {
+                botDiv.innerText = response;
+                chatBox.scrollTop = chatBox.scrollHeight;
+                saveChatHistory();
+            }, 400);
+        }
+
+        function getAccurateReply(prompt) {
+            const lower = prompt.toLowerCase();
+
+            // 1. Greetings
+            if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey') || lower.includes('namaste')) {
+                return "Hello! Main Samarth AI Assistant hoon. Kaise hain aap? Aaj main aapki kya madad kar sakta hoon?";
+            }
+
+            // 2. Health / Well-being
+            if (lower.includes('kaise ho') || lower.includes('kaisa hai') || lower.includes('how are you')) {
+                return "Main bilkul thik hoon! Shukriya poochne ke liye. Aap bataiye, aapka din kaisa chal raha hai?";
+            }
+
+            // 3. Today's Day / Date Logic
+            if (lower.includes('aaj konsa din hai') || lower.includes('aaj kya din hai') || lower.includes('what day is today')) {
+                const days = ['Sunday (Ravivar)', 'Monday (Somvar)', 'Tuesday (Mangalvar)', 'Wednesday (Budhvar)', 'Thursday (Guruvar)', 'Friday (Shukravar)', 'Saturday (Shanivar)'];
+                const now = new Date();
+                return `Aaj ${days[now.getDay()]} hai! (Tareekh: ${now.toLocaleDateString()})`;
+            }
+
+            // 4. Time / Date Questions
+            if (lower.includes('hafta') || lower.includes('hafte me kitne din') || lower.includes('week me kitne din') || lower.includes('days in a week')) {
+                return "Ek hafte (week) mein kul 7 din hote hain:\n1. Somvar (Monday)\n2. Mangalvar (Tuesday)\n3. Budhvar (Wednesday)\n4. Guruvar (Thursday)\n5. Shukravar (Friday)\n6. Shanivar (Saturday)\n7. Ravivar (Sunday)";
+            }
+
+            if (lower.includes('month me kitne din') || lower.includes('maheene me kitne din') || lower.includes('days in a month')) {
+                return "Ek maheene (month) mein aamtaur par 30 ya 31 din hote hain.\n\n• February mein 28 din hote hain (aur Leap Year mein 29 din).\n• Baaki maheeno mein 30 ya 31 din hote hain.\n• Ek saal mein kul 12 maheene hote hain.";
+            }
+
+            if (lower.includes('saal me kitne din') || lower.includes('days in a year')) {
+                return "Ek saamanya saal (Normal Year) mein 365 din hote hain, aur Leap Year mein 366 din hote hain.";
+            }
+
+            // 5. Identity
+            if (lower.includes('tum kaun ho') || lower.includes('who are you') || lower.includes('naam kya hai')) {
+                return "Main Samarth GenZ Pro AI Assistant hoon, aapka personal companion jo aapke har sawaal ka sahi aur direct jawaab deta hai!";
+            }
+
+            // General Knowledge / Default Fallback Reply
+            return `Aapne pucha: "${prompt}"\n\nIska jawaab yeh hai ki aap mujhse daily life, time, coding, padhai, ya kisi bhi general knowledge topic ke baare mein pooch sakte hain, aur main aapko exact information dunga.`;
+        }
+    </script>
+</body>
+</html>
